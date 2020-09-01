@@ -65,13 +65,16 @@ public class GroupChatServerHandler extends SimpleChannelInboundHandler<String> 
     // 读取数据
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String s) throws Exception {
+        String formatDate = simpleDateFormat.format(new Date());
+
         Channel channel = ctx.channel();
+        System.out.println(formatDate + " [客户端] " + channel.remoteAddress() + " 发送了消息 " + s + "\n");
+
         channelGroup.forEach(ch -> {
-            String formatDate = simpleDateFormat.format(new Date());
             if (ch != channel){
-                ch.writeAndFlush(formatDate + " [客户端] " + channel.remoteAddress() + " 发送了消息 " + s + "\n");
+                ch.writeAndFlush(formatDate + " [客户] " + channel.remoteAddress() + " 发送了消息 " + s + "\n");
             }else {
-                ch.writeAndFlush(formatDate + " [我自己] " + channel.remoteAddress() + " 发送了消息 " + s + "\n");
+                ch.writeAndFlush(formatDate + " [自己] " + channel.remoteAddress() + " 发送了消息 " + s + "\n");
             }
         });
     }
